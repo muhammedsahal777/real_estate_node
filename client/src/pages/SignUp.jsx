@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
 import {Link, useNavigate} from "react-router-dom"
 import axios from 'axios'
+import OAuth from '../components/OAuth.jsx'
 
-const config = {
-  headers: {
-    'Content-Type': 'multipart/form-data'
-  }
-}
+
 export default function SignUp() {
   const [formData,setFormData] = useState({})
-  const [error ,setError] = useState(false)
+  const [error ,setError] = useState(null)
   const [loading , setLoading] = useState(false)
   const navigate = useNavigate()
   const handleChange = (e)=>{
@@ -26,13 +23,13 @@ export default function SignUp() {
     
     try{
       setLoading(true)
-      setError(false)
+      setError(null)
       const result = await axios.post("http://localhost:3000/api/user/sign-up", formData)
       navigate("/sign-in")
     console.log(result)
     }catch(error){
       setLoading(false)
-      setError(true)
+      setError(error.response.data.message)
       console.log(error.response.data.success)
     }
     
@@ -46,6 +43,7 @@ export default function SignUp() {
         <input type="password" placeholder='password' className='border p-3 rounded-lg' id='password' onChange={handleChange}/>
         <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>
         {loading ? "loading" : "signup"}</button>
+        <OAuth />
       </form>
       <div className="flex gap-2 mt-5">
         <p>Have an account?</p>
